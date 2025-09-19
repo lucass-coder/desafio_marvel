@@ -1,8 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart'; // 1. Importe o novo pacote
 import 'package:desafio_marvel/core/config/analytics_constants.dart';
 import 'package:desafio_marvel/core/services/analytics_service.dart';
 import 'package:desafio_marvel/modules/characters/domain/entities/chacacter_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 
 class CharacterCard extends StatelessWidget {
   final CharacterEntity character;
@@ -36,8 +38,21 @@ class CharacterCard extends StatelessWidget {
         child: Stack(
           alignment: isCarousel ? Alignment.bottomLeft : Alignment.bottomCenter,
           children: [
-            Image.network(
-              character.thumbnailUrl,
+            CachedNetworkImage(
+              imageUrl: character.thumbnailUrl,
+              placeholder: (context, url) => Shimmer(
+                duration: const Duration(seconds: 2),
+                color: Colors.white,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black38,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+              ),
+              errorWidget: (context, url, error) => const Center(
+                child: Icon(Icons.error_outline, color: Colors.white),
+              ),
               fit: BoxFit.cover,
               width: double.infinity,
               height: double.infinity,
@@ -49,7 +64,7 @@ class CharacterCard extends StatelessWidget {
                 borderRadius: isCarousel
                     ? const BorderRadius.vertical(bottom: Radius.circular(16))
                     : null,
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
                   colors: [Colors.black87, Colors.transparent],

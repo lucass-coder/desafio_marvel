@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -41,8 +42,17 @@ class _CustomAppBarState extends State<CustomAppBar> {
             Spacer(),
             Padding(
               padding: const EdgeInsets.only(top: 48, bottom: 12, right: 24),
-              child: Image.network(
-                'https://logodownload.org/wp-content/uploads/2017/05/marvel-logo-1.png',
+              child: CachedNetworkImage(
+                imageUrl:
+                    'https://logodownload.org/wp-content/uploads/2017/05/marvel-logo-1.png',
+                placeholder: (context, url) =>
+                    const SizedBox(width: 100, height: 40),
+                errorWidget: (context, url, error) => Image.asset(
+                  'assets/images/marvel_logo.png',
+                  fit: BoxFit.contain,
+                  width: 100,
+                  height: 40,
+                ),
                 fit: BoxFit.contain,
                 width: 100,
                 height: 40,

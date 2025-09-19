@@ -1,8 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:desafio_marvel/core/services/analytics_service.dart';
 import 'package:desafio_marvel/core/widgets/custom_app_bar.dart';
 import 'package:desafio_marvel/modules/characters/domain/entities/chacacter_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 
 class CharacterDetailsPage extends StatefulWidget {
   final CharacterEntity characterInfo;
@@ -36,11 +38,27 @@ class _CharacterDetailsPageState extends State<CharacterDetailsPage> {
             Stack(
               children: [
                 ClipRRect(
-                  child: Image.network(
-                    widget.characterInfo.thumbnailUrl,
-                    fit: BoxFit.fill,
-                    height: 400,
-                    width: double.infinity,
+                  child: ClipRRect(
+                    child: CachedNetworkImage(
+                      imageUrl: widget.characterInfo.thumbnailUrl,
+                      placeholder: (context, url) => Shimmer(
+                        duration: const Duration(seconds: 2),
+                        color: Colors.white,
+                        child: Container(color: Colors.black38),
+                      ),
+
+                      errorWidget: (context, url, error) => const Center(
+                        child: Icon(
+                          Icons.image_not_supported_rounded,
+                          color: Colors.white,
+                          size: 50,
+                        ),
+                      ),
+
+                      fit: BoxFit.fill,
+                      height: 400,
+                      width: double.infinity,
+                    ),
                   ),
                 ),
                 Container(
