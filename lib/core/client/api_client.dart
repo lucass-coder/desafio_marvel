@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:nativewrappers/_internal/vm/lib/developer.dart';
+import 'dart:developer';
 
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
