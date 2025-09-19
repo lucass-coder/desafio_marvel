@@ -13,7 +13,7 @@ class CharactersGridView extends StatelessWidget {
       padding: const EdgeInsets.only(left: 24, right: 24),
       sliver: SliverGrid(
         delegate: SliverChildBuilderDelegate((context, index) {
-          return CharacterCard(character: characters[index]);
+          return CharacterCard.grid(character: characters[index]);
         }, childCount: characters.length),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
