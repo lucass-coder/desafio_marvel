@@ -23,6 +23,26 @@ class CharactersHomeDatasource {
     }
   }
 
+  Future<List<CharacterEntity>> getCharactersFromName({
+    required int offset,
+    required int limit,
+    required String name,
+  }) async {
+    try {
+      final response = await dio.get(
+        '/characters',
+        queryParameters: {
+          "offset": offset,
+          "limit": limit,
+          "nameStartsWith": name,
+        },
+      );
+      return CharacterModel.fromList(response.data['data']['results']);
+    } on DioException catch (e) {
+      _handleDioException(e);
+    }
+  }
+
   Never _handleDioException(DioException e) {
     if (e.response != null) {
       final statusCode = e.response!.statusCode;

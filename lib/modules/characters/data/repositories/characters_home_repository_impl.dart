@@ -13,4 +13,17 @@ class CharactersHomeRepositoryImpl extends CharactersHomeRepository {
   }) {
     return datasource.getCharactersForPagination(offset: offset, limit: limit);
   }
+
+  @override
+  Future<List<CharacterEntity>> getCharactersFromName({
+    required int offset,
+    required int limit,
+    required String name,
+  }) {
+    return datasource.getCharactersFromName(
+      offset: offset,
+      limit: limit,
+      name: name,
+    );
+  }
 }

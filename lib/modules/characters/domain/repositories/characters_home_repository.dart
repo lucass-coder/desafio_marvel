@@ -5,4 +5,9 @@ abstract class CharactersHomeRepository {
     required int offset,
     required int limit,
   });
+  Future<List<CharacterEntity>> getCharactersFromName({
+    required int offset,
+    required int limit,
+    required String name,
+  });
 }
