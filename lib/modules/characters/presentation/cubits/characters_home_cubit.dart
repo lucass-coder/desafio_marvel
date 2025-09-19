@@ -12,52 +12,31 @@ part 'characters_home_state.dart';
 class CharactersHomeCubit extends Cubit<CharactersHomeState> {
   final GetCharactersUseCase getCharactersUseCase;
   final GetCharactersForNameUseCase getCharactersForNameUseCase;
+
   CharactersHomeCubit(
     this.getCharactersUseCase,
     this.getCharactersForNameUseCase,
   ) : super(CharactersHomeInitial());
 
-  int _offset = 0;
-  final int _limit = 20;
-  bool _isFetching = false;
-  final List<CharacterEntity> _characters = [];
   String? _currentSearchName;
-
-  bool _hasReachedEnd = false;
+  final int _limit = 20;
 
   Future<void> fetchInitialCharacters() async {
+    _currentSearchName = null;
     emit(CharactersHomeLoading());
 
-    _offset = 0;
-    _characters.clear();
-    _hasReachedEnd = false;
     try {
       final newCharacters = await getCharactersUseCase(
-        offset: _offset,
+        offset: 0,
         limit: _limit,
       );
 
-      if (newCharacters.isEmpty) {
-        emit(
-          CharactersHomeSuccess(
-            characters: List.from(_characters),
-            hasReachedEnd: _hasReachedEnd,
-          ),
-        );
-      } else {
-        if (newCharacters.length < _limit) {
-          _hasReachedEnd = true;
-        }
-        _characters.addAll(newCharacters);
-        _offset += _limit;
-
-        emit(
-          CharactersHomeSuccess(
-            characters: List.from(_characters),
-            hasReachedEnd: _hasReachedEnd,
-          ),
-        );
-      }
+      emit(
+        CharactersHomeSuccess(
+          characters: newCharacters,
+          hasReachedEnd: newCharacters.length < _limit,
+        ),
+      );
     } on ApiException catch (e) {
       emit(CharactersHomeError(message: e.message));
     } catch (e) {
@@ -66,80 +45,59 @@ class CharactersHomeCubit extends Cubit<CharactersHomeState> {
   }
 
   Future<void> loadMoreCharacters() async {
-    if (_isFetching || _hasReachedEnd) return;
-    _isFetching = true;
-
+    if (state is! CharactersHomeSuccess) return;
     final currentState = state as CharactersHomeSuccess;
+    if (currentState.isFetching || currentState.hasReachedEnd) return;
+
     emit(currentState.copyWith(isFetching: true));
 
     try {
+      final currentOffset = currentState.characters.length;
+
       final newCharacters = await getCharactersUseCase(
-        offset: _offset,
+        offset: currentOffset,
         limit: _limit,
       );
 
-      if (newCharacters.length < _limit) {
-        _hasReachedEnd = true;
-      }
+      final hasReachedEnd = newCharacters.length < _limit;
 
-      _characters.addAll(newCharacters);
-      _offset += _limit;
+      final updatedCharacters = List<CharacterEntity>.from(
+        currentState.characters,
+      )..addAll(newCharacters);
 
       emit(
         CharactersHomeSuccess(
-          characters: List.from(_characters),
+          characters: updatedCharacters,
           isFetching: false,
-          hasReachedEnd: _hasReachedEnd,
+          hasReachedEnd: hasReachedEnd,
         ),
       );
     } on ApiException catch (e) {
-      //TODO: Lembrar de tratar o erro de loadMore sem mudar o estado todo
-      emit(currentState.copyWith(isFetching: false));
       log('Erro ao carregar mais: ${e.message}');
-    } catch (e) {
       emit(currentState.copyWith(isFetching: false));
-    } finally {
-      _isFetching = false;
+    } catch (e) {
+      log('Erro inesperado ao carregar mais: $e');
+      emit(currentState.copyWith(isFetching: false));
     }
   }
 
   Future<void> fetchInitialCharactersByName({required String name}) async {
-    emit(CharactersHomeLoading());
     _currentSearchName = name;
-    _offset = 0;
-    _characters.clear();
-    _hasReachedEnd = false; // ALTERADO: Reseta a flag no início
+    emit(CharactersHomeLoading());
 
     try {
       final newCharacters = await getCharactersForNameUseCase(
         name: name,
-        offset: _offset,
+        offset: 0,
         limit: _limit,
       );
 
-      if (newCharacters.isEmpty) {
-        emit(
-          CharactersHomeSuccess(
-            characters: List.from(_characters),
-            hasReachedEnd:
-                _hasReachedEnd, // ALTERADO: Passa a flag para o estado
-          ),
-        );
-      } else {
-        // ALTERADO: Verifica se já chegou ao fim na primeira busca
-        if (newCharacters.length < _limit) {
-          _hasReachedEnd = true;
-        }
-        _characters.addAll(newCharacters);
-        _offset += _limit;
-
-        emit(
-          CharactersHomeSuccess(
-            characters: List.from(_characters),
-            hasReachedEnd: _hasReachedEnd, // ALTERADO: Passa a flag
-          ),
-        );
-      }
+      emit(
+        CharactersHomeSuccess(
+          characters: newCharacters,
+          hasReachedEnd: newCharacters.length < _limit,
+        ),
+      );
     } on ApiException catch (e) {
       emit(CharactersHomeError(message: e.message));
     } catch (e) {
@@ -148,44 +106,40 @@ class CharactersHomeCubit extends Cubit<CharactersHomeState> {
   }
 
   Future<void> loadMoreCharactersByName() async {
-    // ALTERADO: Adiciona a guarda _hasReachedEnd
-    if (_isFetching || _hasReachedEnd || _currentSearchName == null) return;
-    _isFetching = true;
-
+    if (state is! CharactersHomeSuccess || _currentSearchName == null) return;
     final currentState = state as CharactersHomeSuccess;
+    if (currentState.isFetching || currentState.hasReachedEnd) return;
+
     emit(currentState.copyWith(isFetching: true));
 
     try {
+      final currentOffset = currentState.characters.length;
+
       final newCharacters = await getCharactersForNameUseCase(
         name: _currentSearchName!,
-        offset: _offset,
+        offset: currentOffset,
         limit: _limit,
       );
 
-      // ALTERADO: Verifica se chegou ao fim
-      if (newCharacters.length < _limit) {
-        _hasReachedEnd = true;
-      }
+      final hasReachedEnd = newCharacters.length < _limit;
 
-      _characters.addAll(newCharacters);
-      _offset += _limit;
+      final updatedCharacters = List<CharacterEntity>.from(
+        currentState.characters,
+      )..addAll(newCharacters);
 
       emit(
         CharactersHomeSuccess(
-          characters: List.from(_characters),
+          characters: updatedCharacters,
           isFetching: false,
-          hasReachedEnd: _hasReachedEnd, // ALTERADO: Passa a flag
+          hasReachedEnd: hasReachedEnd,
         ),
       );
     } on ApiException catch (e) {
-      //TODO: Assim como a Função loadMoreCharacters
-      // Lembrar de tratar o erro de loadMore sem mudar o estado todo
+      log('Erro ao carregar mais por nome: ${e.message}');
       emit(currentState.copyWith(isFetching: false));
-      log('Erro ao carregar mais: ${e.message}');
     } catch (e) {
+      log('Erro inesperado ao carregar mais por nome: $e');
       emit(currentState.copyWith(isFetching: false));
-    } finally {
-      _isFetching = false;
     }
   }
 }
