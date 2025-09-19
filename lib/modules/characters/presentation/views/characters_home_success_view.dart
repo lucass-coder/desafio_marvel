@@ -1,11 +1,15 @@
 import 'package:desafio_marvel/modules/characters/presentation/cubits/characters_home_cubit.dart';
+import 'package:desafio_marvel/modules/characters/presentation/widgets/character_search_field.dart';
 import 'package:desafio_marvel/modules/characters/presentation/widgets/characters_grid_view.dart';
+import 'package:desafio_marvel/modules/characters/presentation/widgets/featured_characters_carousel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CharactersHomeSuccessView extends StatelessWidget {
   final CharactersHomeCubit cubit;
   final ScrollController scrollController;
+  final TextEditingController searchController;
+  final ValueChanged<String> onSearchChanged;
   final Future<void> Function() onRefresh;
   final CharactersHomeSuccess state;
 
@@ -13,6 +17,8 @@ class CharactersHomeSuccessView extends StatelessWidget {
     super.key,
     required this.cubit,
     required this.scrollController,
+    required this.searchController,
+    required this.onSearchChanged,
     required this.onRefresh,
     required this.state,
   });
@@ -25,7 +31,9 @@ class CharactersHomeSuccessView extends StatelessWidget {
             !state.isFetching &&
             notification.metrics.pixels >=
                 notification.metrics.maxScrollExtent * 0.9) {
-          cubit.loadMoreCharacters();
+          searchController.text.isEmpty
+              ? cubit.loadMoreCharacters()
+              : cubit.loadMoreCharactersByName();
         }
         return true;
       },
@@ -36,7 +44,24 @@ class CharactersHomeSuccessView extends StatelessWidget {
         controller: scrollController,
         slivers: [
           CupertinoSliverRefreshControl(onRefresh: onRefresh),
+          SliverToBoxAdapter(
+            child: FeaturedCharactersCarousel(characters: state.characters),
+          ),
+
+          SliverToBoxAdapter(
+            child: CharacterSearchField(
+              controller: searchController,
+              onChanged: onSearchChanged,
+            ),
+          ),
+
+          if (state.characters.isEmpty)
+            SliverToBoxAdapter(
+              child: const Center(child: Text('No characters found')),
+            ),
+
           CharactersGridView(characters: state.characters),
+
           if (state.isFetching)
             const SliverToBoxAdapter(
               child: Padding(
@@ -44,6 +69,7 @@ class CharactersHomeSuccessView extends StatelessWidget {
                 child: Center(child: CircularProgressIndicator()),
               ),
             ),
+
           if (state.hasReachedEnd && !state.isFetching)
             const SliverToBoxAdapter(
               child: Padding(

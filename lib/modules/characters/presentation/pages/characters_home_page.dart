@@ -1,3 +1,4 @@
+import 'package:desafio_marvel/core/utils/debouncer.dart';
 import 'package:desafio_marvel/core/widgets/custom_app_bar.dart';
 import 'package:desafio_marvel/modules/characters/presentation/cubits/characters_home_cubit.dart';
 import 'package:desafio_marvel/modules/characters/presentation/views/characters_home_success_view.dart';
@@ -14,7 +15,9 @@ class CharactersHomePage extends StatefulWidget {
 
 class _CharactersHomePageState extends State<CharactersHomePage> {
   late CharactersHomeCubit cubit;
+  final searchEC = TextEditingController();
   final scrollController = ScrollController();
+  final _debouncer = Debouncer(duration: const Duration(milliseconds: 500));
 
   @override
   void initState() {
@@ -26,11 +29,26 @@ class _CharactersHomePageState extends State<CharactersHomePage> {
   @override
   void dispose() {
     super.dispose();
+    searchEC.dispose();
     scrollController.dispose();
+    _debouncer.dispose();
+  }
+
+  void _onChange(String searchText) {
+    _debouncer.run(() {
+      searchEC.text.isEmpty
+          ? cubit.fetchInitialCharacters()
+          : cubit.fetchInitialCharactersByName(name: searchText);
+    });
   }
 
   Future<void> _onRefresh() async {
-    await cubit.fetchInitialCharacters();
+    final searchText = searchEC.text;
+    if (searchText.isEmpty) {
+      await cubit.fetchInitialCharacters();
+    } else {
+      await cubit.fetchInitialCharactersByName(name: searchText);
+    }
   }
 
   @override
@@ -47,6 +65,8 @@ class _CharactersHomePageState extends State<CharactersHomePage> {
             return CharactersHomeSuccessView(
               cubit: cubit,
               scrollController: scrollController,
+              searchController: searchEC,
+              onSearchChanged: _onChange,
               onRefresh: _onRefresh,
               state: state,
             );
