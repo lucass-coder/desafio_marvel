@@ -1,14 +1,7 @@
-import 'package:desafio_marvel/core/client/api_client.dart';
 import 'package:desafio_marvel/modules/characters/characters_home_module.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 class AppModule extends Module {
-  @override
-  void binds(Injector i) {
-    super.binds(i);
-    i.add<ApiClient>(() => ApiClient());
-  }
-
   @override
   void routes(RouteManager r) {
     super.routes(r);
