@@ -1,3 +1,5 @@
+import 'package:desafio_marvel/core/config/analytics_constants.dart';
+import 'package:desafio_marvel/core/services/analytics_service.dart';
 import 'package:desafio_marvel/modules/characters/domain/entities/chacacter_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -16,6 +18,14 @@ class CharacterCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final cardContent = GestureDetector(
       onTap: () {
+        AnalyticsService.logCustomEvent(
+          name: AnalyticsEvents.viewCharacterDetails,
+          parameters: {
+            AnalyticsParams.itemId: character.id.toString(),
+            AnalyticsParams.itemName: character.name,
+            AnalyticsParams.contentType: 'character',
+          },
+        );
         Modular.to.pushNamed(
           '/character-details',
           arguments: {'characterInfo': character},
@@ -62,7 +72,6 @@ class CharacterCard extends StatelessWidget {
       ),
     );
 
-    // Se for um card de carrossel, ele precisa de uma largura fixa.
     if (isCarousel) {
       return SizedBox(width: 140, child: cardContent);
     }

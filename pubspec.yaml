@@ -41,6 +41,7 @@ dependencies:
   flutter_dotenv: ^6.0.0
   crypto: ^3.0.3
   flutter_native_splash: ^2.4.6
+  shimmer_animation: ^2.2.2
 
 dev_dependencies:
   flutter_test:

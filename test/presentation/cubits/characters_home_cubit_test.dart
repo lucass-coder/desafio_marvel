@@ -50,7 +50,6 @@ void main() {
   });
 
   group('fetchInitialCharacters', () {
-    // Teste para o caminho feliz (sucesso)
     blocTest<CharactersHomeCubit, CharactersHomeState>(
       'deve emitir [Loading, Success] quando a busca for bem sucedida',
       build: () {
@@ -120,7 +119,6 @@ void main() {
   });
 
   group('loadMoreCharacters', () {
-    // Configuração prévia para os testes de 'loadMore'
     final tInitialState = CharactersHomeSuccess(
       characters: tCharacterList,
       isFetching: false,
@@ -163,7 +161,7 @@ void main() {
       build: () => cubit,
       seed: () => CharactersHomeSuccess(characters: [], isFetching: true),
       act: (cubit) => cubit.loadMoreCharacters(),
-      expect: () => <Matcher>[], // Espera que NENHUM estado seja emitido
+      expect: () => <Matcher>[],
       verify: (_) {
         verifyNever(
           () => mockGetCharactersUseCase.call(

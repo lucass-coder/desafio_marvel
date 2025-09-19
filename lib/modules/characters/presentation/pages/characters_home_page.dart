@@ -1,6 +1,8 @@
+import 'package:desafio_marvel/core/services/analytics_service.dart';
 import 'package:desafio_marvel/core/utils/debouncer.dart';
 import 'package:desafio_marvel/core/widgets/custom_app_bar.dart';
 import 'package:desafio_marvel/modules/characters/presentation/cubits/characters_home_cubit.dart';
+import 'package:desafio_marvel/modules/characters/presentation/views/characters_home_loading_view.dart';
 import 'package:desafio_marvel/modules/characters/presentation/views/characters_home_success_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,6 +26,7 @@ class _CharactersHomePageState extends State<CharactersHomePage> {
     super.initState();
     cubit = Modular.get<CharactersHomeCubit>();
     cubit.fetchInitialCharacters();
+    AnalyticsService.logScreenView('CharactersHomePage');
   }
 
   @override
@@ -60,7 +63,7 @@ class _CharactersHomePageState extends State<CharactersHomePage> {
         builder: (context, state) {
           if (state is CharactersHomeLoading ||
               state is CharactersHomeInitial) {
-            return Center(child: CircularProgressIndicator());
+            return CharactersHomeLoadingView();
           } else if (state is CharactersHomeSuccess) {
             return CharactersHomeSuccessView(
               cubit: cubit,

@@ -1,12 +1,24 @@
+import 'package:desafio_marvel/core/services/analytics_service.dart';
 import 'package:desafio_marvel/core/widgets/custom_app_bar.dart';
 import 'package:desafio_marvel/modules/characters/domain/entities/chacacter_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-class CharacterDetailsPage extends StatelessWidget {
+class CharacterDetailsPage extends StatefulWidget {
   final CharacterEntity characterInfo;
 
   const CharacterDetailsPage({super.key, required this.characterInfo});
+
+  @override
+  State<CharacterDetailsPage> createState() => _CharacterDetailsPageState();
+}
+
+class _CharacterDetailsPageState extends State<CharacterDetailsPage> {
+  @override
+  void initState() {
+    super.initState();
+    AnalyticsService.logScreenView('CharacterDetailsPage');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +37,7 @@ class CharacterDetailsPage extends StatelessWidget {
               children: [
                 ClipRRect(
                   child: Image.network(
-                    characterInfo.thumbnailUrl,
+                    widget.characterInfo.thumbnailUrl,
                     fit: BoxFit.fill,
                     height: 400,
                     width: double.infinity,
@@ -51,7 +63,7 @@ class CharacterDetailsPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    characterInfo.name,
+                    widget.characterInfo.name,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 26,
@@ -69,8 +81,8 @@ class CharacterDetailsPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    characterInfo.description.length > 2
-                        ? characterInfo.description
+                    widget.characterInfo.description.length > 2
+                        ? widget.characterInfo.description
                         : "No description available.",
                     style: const TextStyle(
                       color: Colors.white,

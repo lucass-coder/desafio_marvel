@@ -5,7 +5,6 @@ import 'package:desafio_marvel/modules/characters/domain/usecases/get_characters
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
-// 1. Crie um Mock para a dependência do UseCase (o Repository)
 class MockCharactersHomeRepository extends Mock
     implements CharactersHomeRepository {}
 
@@ -18,7 +17,6 @@ void main() {
     usecase = GetCharactersForNameUseCase(mockRepository);
   });
 
-  // Lista de personagens de teste
   const tCharacterList = [
     CharacterEntity(
       id: 1,
