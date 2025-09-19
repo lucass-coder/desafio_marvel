@@ -1,9 +1,9 @@
 class AnalyticsEvents {
-  static const viewCharacterDetails = 'select_item';
+  static const viewCharacterDetails = 'select_character';
 }
 
 class AnalyticsParams {
-  static const itemId = 'item_id';
-  static const itemName = 'item_name';
+  static const itemId = 'character_id';
+  static const itemName = 'character_name';
   static const contentType = 'content_type';
 }

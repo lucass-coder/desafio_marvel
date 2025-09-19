@@ -23,7 +23,7 @@ class CharacterCard extends StatelessWidget {
           parameters: {
             AnalyticsParams.itemId: character.id.toString(),
             AnalyticsParams.itemName: character.name,
-            AnalyticsParams.contentType: 'character',
+            AnalyticsParams.contentType: 'character-card',
           },
         );
         Modular.to.pushNamed(
