@@ -18,7 +18,9 @@ class CharacterCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String characterId = 'character_card_${character.id}';
     final cardContent = GestureDetector(
+      key: Key(characterId),
       onTap: () {
         AnalyticsService.logCustomEvent(
           name: AnalyticsEvents.viewCharacterDetails,
@@ -88,7 +90,11 @@ class CharacterCard extends StatelessWidget {
     );
 
     if (isCarousel) {
-      return SizedBox(width: 140, child: cardContent);
+      return SizedBox(
+        key: const Key('carousel_card_sized_box'),
+        width: 140,
+        child: cardContent,
+      );
     }
 
     return cardContent;
