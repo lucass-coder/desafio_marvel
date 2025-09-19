@@ -68,7 +68,7 @@ Dentro deste arquivo, adicione suas chaves no seguinte formato:
 
 .env
 
-MARVEL_PUBLIC_KEY="SUA_CHAVE_PUBLICA_AQUI"
+MARVEL_PUBLIC_KEY="SUA_CHAVE_PUBLICA_AQUI"      
 MARVEL_PRIVATE_KEY="SUA_CHAVE_PRIVADA_AQUI"
 
 > **Importante**: O arquivo `.env` já está incluído no `.gitignore` e não será enviado para o repositório.  
