@@ -30,6 +30,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
               visible: widget.onBack != null,
               replacement: SizedBox(width: 24),
               child: IconButton(
+                key: Key('back_button'),
                 icon: Icon(
                   Icons.arrow_back_ios,
                   color: Colors.white,
