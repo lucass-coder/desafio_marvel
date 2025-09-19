@@ -6,8 +6,8 @@ import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-class HomeApiClient extends DioForNative {
-  HomeApiClient() {
+class ApiClient extends DioForNative {
+  ApiClient() {
     final publicKey = dotenv.env['MARVEL_PUBLIC_KEY'] ?? '';
     final privateKey = dotenv.env['MARVEL_PRIVATE_KEY'] ?? '';
 
