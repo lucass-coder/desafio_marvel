@@ -33,42 +33,60 @@ void main() {
   ];
   const tOffset = 0;
   const tLimit = 20;
+  const tName = 'Spi';
 
-  test('deve retornar uma lista de personagens do repositório', () async {
-    when(
-      () => mockRepository.getCharacters(
-        offset: any(named: 'offset'),
-        limit: any(named: 'limit'),
-      ),
-    ).thenAnswer((_) async => tCharacterList);
+  test(
+    'deve retornar uma lista de personagens do repositório ao buscar por nome',
+    () async {
+      when(
+        () => mockRepository.getCharactersFromName(
+          offset: any(named: 'offset'),
+          limit: any(named: 'limit'),
+          name: any(named: 'name'),
+        ),
+      ).thenAnswer((_) async => tCharacterList);
 
-    final result = await usecase.call(
-      offset: tOffset,
-      limit: tLimit,
-      name: 'Spi',
-    );
+      final result = await usecase.call(
+        offset: tOffset,
+        limit: tLimit,
+        name: tName,
+      );
 
-    expect(result, tCharacterList);
-    verify(() => mockRepository.getCharacters(offset: tOffset, limit: tLimit));
-    verifyNoMoreInteractions(mockRepository);
-  });
+      expect(result, tCharacterList);
+      verify(
+        () => mockRepository.getCharactersFromName(
+          offset: tOffset,
+          limit: tLimit,
+          name: tName,
+        ),
+      );
+      verifyNoMoreInteractions(mockRepository);
+    },
+  );
 
-  test('deve propagar a exceção do repositório', () async {
+  test('deve propagar a exceção do repositório ao buscar por nome', () async {
     final tException = ServerException('Erro no servidor');
     when(
-      () => mockRepository.getCharacters(
+      () => mockRepository.getCharactersFromName(
         offset: any(named: 'offset'),
         limit: any(named: 'limit'),
+        name: any(named: 'name'),
       ),
     ).thenThrow(tException);
 
     final call = usecase.call;
 
     expect(
-      () => call(offset: tOffset, limit: tLimit, name: 'Spi'),
+      () => call(offset: tOffset, limit: tLimit, name: tName),
       throwsA(isA<ServerException>()),
     );
-    verify(() => mockRepository.getCharacters(offset: tOffset, limit: tLimit));
+    verify(
+      () => mockRepository.getCharactersFromName(
+        offset: tOffset,
+        limit: tLimit,
+        name: tName,
+      ),
+    );
     verifyNoMoreInteractions(mockRepository);
   });
 }
