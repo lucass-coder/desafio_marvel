@@ -1,5 +1,6 @@
 import 'package:desafio_marvel/modules/characters/domain/entities/chacacter_entity.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
 class CharacterCard extends StatelessWidget {
   final CharacterEntity character;
@@ -15,7 +16,10 @@ class CharacterCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final cardContent = GestureDetector(
       onTap: () {
-        //TODO: Navegar para a página de detalhes do personagem
+        Modular.to.pushNamed(
+          '/character-details',
+          arguments: {'characterInfo': character},
+        );
       },
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
@@ -38,7 +42,7 @@ class CharacterCard extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
-                  colors: [Colors.black.withOpacity(0.8), Colors.transparent],
+                  colors: [Colors.black87, Colors.transparent],
                 ),
               ),
               child: Text(

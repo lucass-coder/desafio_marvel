@@ -1,10 +1,12 @@
 import 'package:desafio_marvel/core/client/api_client.dart';
 import 'package:desafio_marvel/modules/characters/data/datasources/characters_home_datasource.dart';
 import 'package:desafio_marvel/modules/characters/data/repositories/characters_home_repository_impl.dart';
+import 'package:desafio_marvel/modules/characters/domain/entities/chacacter_entity.dart';
 import 'package:desafio_marvel/modules/characters/domain/repositories/characters_home_repository.dart';
 import 'package:desafio_marvel/modules/characters/domain/usecases/get_characters_for_name_usecase.dart';
 import 'package:desafio_marvel/modules/characters/domain/usecases/get_characters_usecase.dart';
 import 'package:desafio_marvel/modules/characters/presentation/cubits/characters_home_cubit.dart';
+import 'package:desafio_marvel/modules/characters/presentation/pages/character_details_page.dart';
 import 'package:desafio_marvel/modules/characters/presentation/pages/characters_home_page.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
@@ -46,5 +48,12 @@ class CharactersHomeModule extends Module {
     super.routes(r);
 
     r.child('/', child: (_) => CharactersHomePage());
+
+    r.child(
+      '/character-details',
+      child: (_) => CharacterDetailsPage(
+        characterInfo: r.args.data['characterInfo'] as CharacterEntity,
+      ),
+    );
   }
 }
