@@ -40,6 +40,7 @@ dependencies:
   equatable: ^2.0.5 
   flutter_dotenv: ^6.0.0
   crypto: ^3.0.3
+  flutter_native_splash: ^2.4.6
 
 dev_dependencies:
   flutter_test:
@@ -96,3 +97,14 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+flutter_native_splash:
+  color: "#000000"
+  image: assets/images/splash.png
+  android: true
+  ios: true
+  ios_content_mode: scaleAspectFit
+
+  android_gravity: center
+  android_12:
+    color: "#000000"
+    image: assets/images/splash.png
